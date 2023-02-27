@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import FormNewClient from "../components/FormNewClient.jsx";
 import ModalContainer from "../components/ModalContainer.jsx";
 import Button from "../components/Button.jsx";
+import ModalButton from "../components/ModalButton.jsx";
 
 const refreshData = [
   {
@@ -129,10 +130,7 @@ const Client = () => {
         </div>
         {
           !tableEditMode && (
-            <button type="button" className="btn btn-success col-1" data-bs-toggle="modal"
-                    data-bs-target="#createClient">
-              Registrar
-            </button>
+            <ModalButton label='Registrar' modalId='createClient' classList='btn-primary col-1' />
           )
         }
         <Button anotherClass='btn-warning col-2' styles={{marginLeft: '4px'}}

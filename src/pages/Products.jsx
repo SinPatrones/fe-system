@@ -1,5 +1,8 @@
 import {useEffect, useState} from "react";
 import ProductsTable from "../components/ProductsTable.jsx";
+import ModalButton from "../components/ModalButton.jsx";
+import ModalContainer from "../components/ModalContainer.jsx";
+import FormNewProduct from "../components/FormNewProduct.jsx";
 
 const products = [
   {
@@ -42,6 +45,12 @@ const Products = () => {
     expirationDate: '',
     stock: '',
   });
+  const [newProduct, setNewProduct] = useState({
+    productName: '',
+    category: '',
+    expirationDate: '',
+    stock: '',
+  });
 
   const fetchProducts = () => {
     setProductsList([...products.map(item => ({...item}))]);
@@ -59,6 +68,14 @@ const Products = () => {
     setProductEditedData({
       ...productEditedData,
       [attribute]: value
+    });
+  };
+
+  const onCreateNewProduct = (evt) => {
+    const {name, value} = evt.target;
+    setNewProduct({
+      ...newProduct,
+      [name]: value
     });
   };
 
@@ -87,10 +104,15 @@ const Products = () => {
   return (
     <>
       <h2 className='text-center mb-4'>Productos</h2>
+      <ModalButton label='Crear Producto' modalId='createProduct' classList='btn-primary' />
       <ProductsTable items={productsList} onEditMode={editProduct} editMode={productToEdit}
                      onEditClick={selectProductToEdit} valuesToEdit={productEditedData}
                      cancelEdition={cancelEdition} fetchRemoveProduct={fetchRemoveProduct}
                      fetchSaveNewData={fetchSaveNewData}/>
+
+      <ModalContainer modalId='createProduct' title='Crear nuevo Producto' >
+        <FormNewProduct onChange={onCreateNewProduct} values={newProduct} />
+      </ModalContainer>
     </>
   );
 };
