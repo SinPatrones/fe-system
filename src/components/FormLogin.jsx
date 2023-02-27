@@ -1,13 +1,13 @@
 import Input from "./Input.jsx";
 import Button from "./Button.jsx";
 
-const FormLogin = ({onSubmit, classList = ''}) => {
+const FormLogin = ({onSubmit, values, onChangeData, classList = ''}) => {
 
   return (
     <form className={classList} onSubmit={onSubmit}>
-      <Input required={true} inputID='email' label='Email' inputType='email' onChange={() => {}} />
-      <Input required={true} inputID='password1' label='Contraseña' inputType='password' onChange={() => {}} />
-      <Button label='Guardar' name='save' type='submit' anotherClass='btn-primary btn-block' onClick={() => {}} />
+      <Input required={true} inputID='email' value={values.email} label='Email' inputType='email' onChange={onChangeData} />
+      <Input required={true} inputID='password' value={values.password} label='Contraseña' inputType='password' onChange={onChangeData} />
+      <Button label='Ingresar' name='login' type='submit' anotherClass='btn-primary btn-block' />
     </form>
   );
 };
