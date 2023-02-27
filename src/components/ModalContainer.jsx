@@ -1,4 +1,4 @@
-const ModalContainer = ({children, modalId, title}) => {
+const ModalContainer = ({children, modalId, title, onSubmit}) => {
 
   return (
     <div className="modal faded" id={modalId} tabIndex="-1"
@@ -17,7 +17,7 @@ const ModalContainer = ({children, modalId, title}) => {
             <button type="button" className="btn btn-secondary"
                     data-bs-dismiss="modal">Cancelar
             </button>
-            <button type="button" className="btn btn-primary px-4">Crear</button>
+            <button type="button" className="btn btn-primary px-4" onClick={onSubmit}>Crear</button>
           </div>
         </div>
       </div>

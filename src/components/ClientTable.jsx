@@ -52,8 +52,8 @@ const ClientTable = ({items, editMode = false, onEditMode}) => {
                   {editMode && <InputEditMode value={item.name} onChange={(evt) => onEditMode(item.clientId, 'name', evt.target.value)} /> }
                 </td>
                 <td>
-                  {!editMode && item.lastName}
-                  {editMode && <InputEditMode value={item.lastName} onChange={(evt) => onEditMode(item.clientId, 'lastName', evt.target.value)} />}
+                  {!editMode && item.lastname}
+                  {editMode && <InputEditMode value={item.lastname} onChange={(evt) => onEditMode(item.clientId, 'lastName', evt.target.value)} />}
                 </td>
                 <td>
                   {!editMode && item.email}

@@ -6,6 +6,7 @@ import Button from "../components/Button.jsx";
 import ModalButton from "../components/ModalButton.jsx";
 
 import axios from "axios";
+import swal from "sweetalert";
 
 const refreshData = [
   {
@@ -45,8 +46,8 @@ const Client = () => {
   const [inputSearchText, setInputSearchText] = useState('');
   const [tableEditMode, setTableEditMode] = useState(false);
   const [newClient, setNewClient] = useState({
-    name: 'juan',
-    lastName: '',
+    name: '',
+    lastname: '',
     email: '',
     address: '',
     phone: '',
@@ -56,9 +57,28 @@ const Client = () => {
     fetchClientsList();
   }, []);
 
-  const fetchClientsList = () => {
-    setClientsList([...refreshData]);
+  const fetchClientsList = async () => {
+    try {
+      const fetchClientsList = await axios.get('http://localhost:3000/api/client');
+      console.log(fetchClientsList);
+      setClientsList([...fetchClientsList.data.body]);
+    } catch (e) {
+      console.log({error: e})
+      return swal({
+        text: 'Error al cargar lista de clientes',
+        icon: 'warning',
+      });
+    }
   };
+
+  const fetchCreateClient = async () => {
+    try {
+      return await axios.post('http://localhost:3000/api/client', newClient);
+    } catch (e) {
+      console.log({error: e});
+      return null;
+    }
+  }
 
   const setNewClientData = (evt) => {
     const {value, name} = evt.target;
@@ -113,6 +133,18 @@ const Client = () => {
     setTableEditMode(false);
   }
 
+  const onSubmitNewClient = async () => {
+    console.log('Creando cliente');
+    const newClientCreated = await fetchCreateClient();
+
+    if (!newClientCreated){
+      return swal({
+        text: 'No se pudo crear nuevo cliente',
+        icon: 'warning',
+      });
+    }
+  }
+
   useEffect(() => {
     if (inputSearchText !== '') {
       searchByName();
@@ -148,7 +180,7 @@ const Client = () => {
       </div>
       <ClientTable items={clientsFounded.length > 0 ? clientsFounded : clientsList}
                    editMode={tableEditMode} onEditMode={onEditMode}/>
-      <ModalContainer modalId='createClient' title='Crear Cliente'>
+      <ModalContainer modalId='createClient' title='Crear Cliente' onSubmit={onSubmitNewClient}>
         <FormNewClient values={newClient} onChange={setNewClientData}/>
       </ModalContainer>
     </>
