@@ -3,6 +3,7 @@ import {BsEraserFill, BsPencil} from 'react-icons/bs';
 import {AiOutlineClose, AiOutlineSave} from 'react-icons/ai';
 import swal from 'sweetalert';
 import InputEditMode from "./InputEditMode.jsx";
+import formatDate from "../libs/formatedDate.js";
 
 const ProductsTable = ({
                          items,
@@ -69,9 +70,9 @@ const ProductsTable = ({
                                    onChange={(evt) => onEditMode(item.productId, 'category', evt.target.value)}/>}
                 </td>
                 <td>
-                  {(editMode !== item.productId) && item.expirationDate}
+                  {(editMode !== item.productId) && formatDate(item.expirationDate)}
                   {(editMode === item.productId) &&
-                    <InputEditMode value={valuesToEdit.expirationDate}
+                    <InputEditMode value={formatDate(valuesToEdit.expirationDate, true)}
                                    onChange={(evt) => onEditMode(item.productId, 'expirationDate', evt.target.value)}
                                    type={'date'}/>}
                 </td>

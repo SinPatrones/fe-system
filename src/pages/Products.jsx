@@ -7,38 +7,16 @@ import FormNewProduct from "../components/FormNewProduct.jsx";
 import axios from "axios";
 import swal from "sweetalert";
 
-const productss = [
-  {
-    productId: 1,
-    productName: 'Manzana',
-    productCategory: 'Fruta',
-    expirationDate: '12-12-2032',
-    stock: 12
-  },
-  {
-    productId: 2,
-    productName: 'Pera',
-    productCategory: 'Fruta',
-    expirationDate: '12-02-2032',
-    stock: 12
-  },
-  {
-    productId: 3,
-    productName: 'Apio',
-    productCategory: 'Verdura',
-    expirationDate: '12-12-2023',
-    stock: 12
-  },
-  {
-    productId: 4,
-    productName: 'Palta',
-    productCategory: 'Fruta',
-    expirationDate: '12-05-2023',
-    stock: 12
-  },
-];
+import io from 'socket.io-client';
+
+const socket = io('http://localhost:3000', {
+  extraHeaders: {
+    channel: 'product'
+  }
+});
 
 const Products = () => {
+  const [socketIsConnected, setSocketIsConnected] = useState(socket.connected);
   const [productsList, setProductsList] = useState([]);
   const [productToEdit, setProductToEdit] = useState(null);
   const [productEditedData, setProductEditedData] = useState({
@@ -140,6 +118,26 @@ const Products = () => {
 
   useEffect(() => {
     fetchProducts();
+  }, []);
+
+  useEffect(() => {
+    socket.on('connect', () => {
+      setSocketIsConnected(true);
+    });
+
+    socket.on('disconnect', () => {
+      setSocketIsConnected(false);
+    });
+
+    socket.on('product', (data) => {
+      fetchProducts();
+    });
+
+    return () => {
+      socket.off('connect');
+      socket.off('disconnect');
+      socket.off('client');
+    };
   }, []);
 
   return (
