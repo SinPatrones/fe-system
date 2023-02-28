@@ -4,7 +4,10 @@ import ModalButton from "../components/ModalButton.jsx";
 import ModalContainer from "../components/ModalContainer.jsx";
 import FormNewProduct from "../components/FormNewProduct.jsx";
 
-const products = [
+import axios from "axios";
+import swal from "sweetalert";
+
+const productss = [
   {
     productId: 1,
     productName: 'Manzana',
@@ -52,17 +55,55 @@ const Products = () => {
     stock: '',
   });
 
-  const fetchProducts = () => {
-    setProductsList([...products.map(item => ({...item}))]);
+  const fetchProducts = async () => {
+    try {
+      const products = await axios.get('http://localhost:3000/api/product/');
+      setProductsList([...products.data.body]);
+    } catch (e) {
+      return swal({
+        title: 'No se pudo obtener los productos',
+        icon: 'warning'
+      });
+    }
   }
 
   const fetchRemoveProduct = (productId) => {
     console.log('se removio el producto', productId);
   }
 
-  const fetchSaveNewData = () => {
-    console.log(`Salvando información nueva de ${productToEdit}`);
+  const fetchSaveNewProduct = async () => {
+    try {
+      const productObj = {
+        ...newProduct,
+        expirationDate: new Date(newProduct.expirationDate).toISOString(),
+        stock: parseInt(newProduct.stock)
+      };
+
+      return await axios.post('http://localhost:3000/api/product/', productObj);
+    } catch (e) {
+      return null;
+    }
   }
+
+  const fetchUpdateProductData = () => {
+    console.log('Salvando nuevos datos de producto editado');
+  };
+
+  const onSubmitNewProduct = async () => {
+    const newProductJson = await fetchSaveNewProduct();
+
+    if (!newProductJson){
+      return swal({
+        title: 'No se pudo registrar nuevo producto',
+        icon: 'warning'
+      });
+    }
+
+    return swal({
+      title: 'Nuevo producto creado',
+      icon: 'success'
+    });
+  };
 
   const editProduct = (productId, attribute, value) => {
     setProductEditedData({
@@ -108,9 +149,9 @@ const Products = () => {
       <ProductsTable items={productsList} onEditMode={editProduct} editMode={productToEdit}
                      onEditClick={selectProductToEdit} valuesToEdit={productEditedData}
                      cancelEdition={cancelEdition} fetchRemoveProduct={fetchRemoveProduct}
-                     fetchSaveNewData={fetchSaveNewData}/>
+                     fetchSaveNewData={fetchUpdateProductData}/>
 
-      <ModalContainer modalId='createProduct' title='Crear nuevo Producto' >
+      <ModalContainer modalId='createProduct' title='Crear nuevo Producto' onSubmit={onSubmitNewProduct} >
         <FormNewProduct onChange={onCreateNewProduct} values={newProduct} />
       </ModalContainer>
     </>

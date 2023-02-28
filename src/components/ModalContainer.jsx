@@ -17,7 +17,8 @@ const ModalContainer = ({children, modalId, title, onSubmit}) => {
             <button type="button" className="btn btn-secondary"
                     data-bs-dismiss="modal">Cancelar
             </button>
-            <button type="button" className="btn btn-primary px-4" onClick={onSubmit}>Crear</button>
+            <button type="button" className="btn btn-primary px-4" onClick={onSubmit}>Crear
+            </button>
           </div>
         </div>
       </div>

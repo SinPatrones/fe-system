@@ -38,7 +38,6 @@ const Login = () => {
 
       return await axios.post('http://localhost:3000/api/user', data);
     } catch (e) {
-      console.log({error: e});
       return null;
     }
   };
@@ -52,7 +51,6 @@ const Login = () => {
   }
 
   const onChangeNewUserForm = (evt) => {
-    console.log('editando', evt.target.name);
     const {name, value} = evt.target;
     setSignupForm({
       ...signupForm,
@@ -69,7 +67,6 @@ const Login = () => {
         icon: 'warning'
       });
     }
-    console.log('Redirigiendo...');
     return navigate('/client');
   }
 

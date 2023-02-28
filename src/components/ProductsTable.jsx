@@ -63,10 +63,10 @@ const ProductsTable = ({
                                    onChange={(evt) => onEditMode(item.productId, 'productName', evt.target.value)}/>}
                 </td>
                 <td>
-                  {(editMode !== item.productId) && item.productCategory}
+                  {(editMode !== item.productId) && item.category}
                   {(editMode === item.productId) &&
-                    <InputEditMode value={valuesToEdit.productCategory}
-                                   onChange={(evt) => onEditMode(item.productId, 'productCategory', evt.target.value)}/>}
+                    <InputEditMode value={valuesToEdit.category}
+                                   onChange={(evt) => onEditMode(item.productId, 'category', evt.target.value)}/>}
                 </td>
                 <td>
                   {(editMode !== item.productId) && item.expirationDate}
