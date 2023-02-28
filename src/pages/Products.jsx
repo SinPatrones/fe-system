@@ -22,7 +22,7 @@ const Products = () => {
   const [productEditedData, setProductEditedData] = useState({
     productId: '',
     productName: '',
-    productCategory: '',
+    category: '',
     expirationDate: '',
     stock: '',
   });
@@ -45,8 +45,22 @@ const Products = () => {
     }
   }
 
-  const fetchRemoveProduct = (productId) => {
-    console.log('se removio el producto', productId);
+  const fetchRemoveProduct = async (productId) => {
+    try {
+      const productDeleted = await axios.delete(`http://localhost:3000/api/product/${productId}`);
+      if (productDeleted){
+        return swal({
+          title: 'Producto eliminado con éxito',
+          icon: 'success'
+        });
+      }
+    } catch (e) {
+      return swal({
+        title: 'No se pudo obtener los productos',
+        icon: 'warning'
+      });
+    }
+    console.log('se removio el producto', productEditedData);
   }
 
   const fetchSaveNewProduct = async () => {
@@ -63,9 +77,29 @@ const Products = () => {
     }
   }
 
-  const fetchUpdateProductData = () => {
-    console.log('Salvando nuevos datos de producto editado');
+  const fetchUpdateProductData = async () => {
+    try {
+      const newData = {
+        ...productEditedData,
+        stock: parseInt(productEditedData.stock)
+      };
+
+      return await axios.patch('http://localhost:3000/api/product/', newData);
+    } catch (e) {
+      return null;
+    }
   };
+
+  const onUpdateProductData = async () => {
+    const updated = await fetchUpdateProductData();
+    if (!updated) {
+      return swal({
+        title: 'No se pudo guardar los nuevos datos del producto',
+        icon: 'warning'
+      });
+    }
+    cancelEdition();
+  }
 
   const onSubmitNewProduct = async () => {
     const newProductJson = await fetchSaveNewProduct();
@@ -96,6 +130,23 @@ const Products = () => {
       ...newProduct,
       [name]: value
     });
+  };
+
+  const onRemove = (productId) => {
+    swal({
+      title: 'Borrar Producto',
+      text: `¿Desea borrar el Producto con ID <${productId}>?`,
+      icon: 'warning',
+      buttons: ['No', 'Si']
+    })
+      .then(answer => {
+        if (answer) {
+          fetchRemoveProduct(productId)
+          swal({
+            text: 'Producto borrado con éxito'
+          });
+        }
+      });
   };
 
   const selectProductToEdit = (productId => {
@@ -147,7 +198,7 @@ const Products = () => {
       <ProductsTable items={productsList} onEditMode={editProduct} editMode={productToEdit}
                      onEditClick={selectProductToEdit} valuesToEdit={productEditedData}
                      cancelEdition={cancelEdition} fetchRemoveProduct={fetchRemoveProduct}
-                     fetchSaveNewData={fetchUpdateProductData}/>
+                     fetchSaveNewData={onUpdateProductData} onRemove={onRemove}/>
 
       <ModalContainer modalId='createProduct' title='Crear nuevo Producto' onSubmit={onSubmitNewProduct} >
         <FormNewProduct onChange={onCreateNewProduct} values={newProduct} />

@@ -1,7 +1,6 @@
 import Button from "./Button.jsx";
 import {BsEraserFill, BsPencil} from 'react-icons/bs';
 import {AiOutlineClose, AiOutlineSave} from 'react-icons/ai';
-import swal from 'sweetalert';
 import InputEditMode from "./InputEditMode.jsx";
 import formatDate from "../libs/formatedDate.js";
 
@@ -13,25 +12,9 @@ const ProductsTable = ({
                          valuesToEdit,
                          cancelEdition,
                          fetchRemoveProduct,
-                         fetchSaveNewData
+                         fetchSaveNewData,
+                         onRemove
                        }) => {
-
-  const onRemove = (productId) => {
-    swal({
-      title: 'Borrar Cliente',
-      text: `¿Desea borrar el Producto con ID <${productId}>?`,
-      icon: 'warning',
-      buttons: ['No', 'Si']
-    })
-      .then(answer => {
-        if (answer) {
-          fetchRemoveProduct(productId)
-          swal({
-            text: 'Producto borrado con éxito'
-          });
-        }
-      });
-  };
 
   return (
     <>
@@ -90,12 +73,14 @@ const ProductsTable = ({
                                          styles={{marginLeft: '4px'}}
                                          onClick={() => onEditClick(item.productId)}/>
                   }
-                  {(editMode && editMode === item.productId) && <Button label={<AiOutlineClose/>} anotherClass='btn-warning'
-                                       styles={{marginLeft: '4px'}}
-                                       onClick={cancelEdition}/>}
-                  {(editMode && editMode === item.productId) && <Button label={<AiOutlineSave/>} anotherClass='btn-success'
-                                       styles={{marginLeft: '4px'}}
-                                       onClick={fetchSaveNewData}/>}
+                  {(editMode && editMode === item.productId) &&
+                    <Button label={<AiOutlineClose/>} anotherClass='btn-warning'
+                            styles={{marginLeft: '4px'}}
+                            onClick={cancelEdition}/>}
+                  {(editMode && editMode === item.productId) &&
+                    <Button label={<AiOutlineSave/>} anotherClass='btn-success'
+                            styles={{marginLeft: '4px'}}
+                            onClick={fetchSaveNewData}/>}
                 </td>
               </tr>
             );
