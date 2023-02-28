@@ -2,6 +2,7 @@ import Button from "./Button.jsx";
 import {BsEraserFill} from 'react-icons/bs';
 import swal from 'sweetalert';
 import InputEditMode from "./InputEditMode.jsx";
+import formatDate from '../libs/formatedDate.js';
 
 const ClientTable = ({items, editMode = false, onEditMode}) => {
 
@@ -68,7 +69,7 @@ const ClientTable = ({items, editMode = false, onEditMode}) => {
                   {editMode && <InputEditMode value={item.phone} onChange={(evt) => onEditMode(item.clientId, 'phone', evt.target.value)} />}
                 </td>
                 <td>
-                  {item.createdAt}
+                  {formatDate(item.createdAt)}
                 </td>
                 {
                   !editMode && (<td>

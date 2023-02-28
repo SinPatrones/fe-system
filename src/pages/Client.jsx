@@ -8,37 +8,16 @@ import ModalButton from "../components/ModalButton.jsx";
 import axios from "axios";
 import swal from "sweetalert";
 
-const refreshData = [
-  {
-    clientId: 1,
-    name: 'Armando',
-    lastName: 'Hinojosa Ccama',
-    email: 'armando@gmail.com',
-    address: 'en su casa',
-    phone: '+51997877168',
-    createdAt: '12/12/2023'
-  },
-  {
-    clientId: 2,
-    name: 'Pepe',
-    lastName: 'Casas Casas',
-    email: 'ccpepe@gmail.com',
-    address: 'en su casa',
-    phone: '+51997877168',
-    createdAt: '12/12/2023'
-  },
-  {
-    clientId: 3,
-    name: 'Luis',
-    lastName: 'Rodriguez Mesa',
-    email: 'rmesa@gmail.com',
-    address: 'en su casa',
-    phone: '+51997877168',
-    createdAt: '12/12/2023'
-  },
-];
+import io from 'socket.io-client';
+
+const socket = io('http://localhost:3000', {
+  extraHeaders: {
+    channel: 'client'
+  }
+});
 
 const Client = () => {
+  const [socketIsConnected, setSocketIsConnected] = useState(socket.connected);
   const [clientsList, setClientsList] = useState([]);
   const [clientsListBackup, setClientsListBackup] = useState([]);
   const [toUpdateList, setToUpdateList] = useState(new Set());
@@ -60,7 +39,6 @@ const Client = () => {
   const fetchClientsList = async () => {
     try {
       const fetchClientsList = await axios.get('http://localhost:3000/api/client');
-      console.log(fetchClientsList);
       setClientsList([...fetchClientsList.data.body]);
     } catch (e) {
       console.log({error: e})
@@ -134,15 +112,14 @@ const Client = () => {
   }
 
   const onSubmitNewClient = async () => {
-    console.log('Creando cliente');
     const newClientCreated = await fetchCreateClient();
-
-    if (!newClientCreated){
+    if (!newClientCreated) {
       return swal({
         text: 'No se pudo crear nuevo cliente',
         icon: 'warning',
       });
     }
+
   }
 
   useEffect(() => {
@@ -152,6 +129,26 @@ const Client = () => {
       setClientsFounded([]);
     }
   }, [inputSearchText]);
+
+  useEffect(() => {
+    socket.on('connect', () => {
+      setSocketIsConnected(true);
+    });
+
+    socket.on('disconnect', () => {
+      setSocketIsConnected(false);
+    });
+
+    socket.on('client', (data) => {
+      fetchClientsList();
+    });
+
+    return () => {
+      socket.off('connect');
+      socket.off('disconnect');
+      socket.off('client');
+    };
+  }, []);
 
   return (
     <>
@@ -164,7 +161,7 @@ const Client = () => {
         </div>
         {
           !tableEditMode && (
-            <ModalButton label='Registrar' modalId='createClient' classList='btn-primary col-1' />
+            <ModalButton label='Registrar' modalId='createClient' classList='btn-primary col-1'/>
           )
         }
         <Button anotherClass='btn-warning col-2' styles={{marginLeft: '4px'}}
@@ -180,7 +177,8 @@ const Client = () => {
       </div>
       <ClientTable items={clientsFounded.length > 0 ? clientsFounded : clientsList}
                    editMode={tableEditMode} onEditMode={onEditMode}/>
-      <ModalContainer modalId='createClient' title='Crear Cliente' onSubmit={onSubmitNewClient}>
+      <ModalContainer modalId='createClient' title='Crear Cliente'
+                      onSubmit={onSubmitNewClient}>
         <FormNewClient values={newClient} onChange={setNewClientData}/>
       </ModalContainer>
     </>
